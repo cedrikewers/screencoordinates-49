@@ -36,12 +36,20 @@ class Indicator extends PanelMenu.Button {
 
         this.add_child(this.label);
 
-        this.updateLabel()
+        this.updateLabel();
 
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+        this._timeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
             this.updateLabel();
-            return true;
+            return GLib.SOURCE_CONTINUE;
         });
+    }
+
+    destroy() {
+        if (this._timeoutId) {
+            GLib.source_remove(this._timeoutId);
+            this._timeoutId = null;
+        }
+        super.destroy();
     }
 
     updateLabel() {
